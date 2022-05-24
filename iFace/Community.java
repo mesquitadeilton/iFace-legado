@@ -8,6 +8,8 @@ public class Community implements Key {
     private ArrayList<User> members = new ArrayList<User>();
     private ArrayList<User> invitations = new ArrayList<User>();
 
+    private ArrayList<Message> feed = new ArrayList<Message>();
+
     public Community(User creator, String name, String description) {
         this.creator = creator;
         this.name = name;
@@ -27,11 +29,15 @@ public class Community implements Key {
     }
 
     public void setMember(User member) {
-        this.members.add(member);
+        members.add(member);
     }
 
     public void setInvitation(User user) {
-        this.invitations.add(user);
+        invitations.add(user);
+    }
+
+    public void setMessage(Message message) {
+        feed.add(message);
     }
 
     public User getCreator() {
@@ -52,6 +58,10 @@ public class Community implements Key {
 
     public ArrayList<User> getInvitations() {
         return invitations;
+    }
+
+    public ArrayList<Message> getFeed() {
+        return feed;
     }
 
     @Override
