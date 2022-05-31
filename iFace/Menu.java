@@ -3,6 +3,8 @@ import java.io.*;
 public class Menu {
     private static User login() throws IOException, InterruptedException {
         Main.clear();
+        System.out.println("         Fazer login          ");
+        System.out.println("------------------------------");
         System.out.print("Email: ");
         String email = Main.input.next();
         User user = Main.search(Main.users, email);
@@ -23,26 +25,40 @@ public class Menu {
 
     private static void createAccount() throws IOException, InterruptedException {
         Main.clear();
+        System.out.println("         Criar conta          ");
+        System.out.println("------------------------------");
         System.out.print("Nome: ");
-        String name = Main.input.next();
-        Main.clear();
 
-        System.out.println("Olá "+name);
-        System.out.print("Email: ");
-        String email = Main.input.next();
-        if(Main.search(Main.users, email) == null) {
-            System.out.print("Senha: ");
-            String password = Main.input.next();
-
-            User user = new User(name, email, password);
-            Main.users.add(user);
+        try {
+            String name = Main.input.next();
+            if(!name.matches("[A-z]+")) throw new Exception("NOME NÃO PODE TER ACENTOS OU NÚMEROS");
 
             Main.clear();
-            System.out.println("CONTA CRIADA");
-        }
-        else {
+            System.out.println("         Criar conta          ");
+            System.out.println("------------------------------");
+            System.out.println("Olá "+name);
+            System.out.println();
+            System.out.print("Email: ");
+            String email = Main.input.next();
+            if(!email.matches("^([\\w\\-]+.)*[\\w\\-]+@([\\w\\-]+.)+([\\w\\-]{2,3})")) throw new Exception("EMAIL INVALIDO");
+
+            if(Main.search(Main.users, email) == null) {
+                System.out.print("Senha: ");
+                String password = Main.input.next();
+
+                User user = new User(name, email, password);
+                Main.users.add(user);
+
+                Main.clear();
+                System.out.println("Conta criada com sucesso");
+            }
+            else {
+                Main.clear();
+                System.out.println("EMAIL JÁ CADASTRADO");
+            }
+        } catch(Exception e) {
             Main.clear();
-            System.out.println("USUÁRIO JÁ CADASTRADO");
+            System.out.println(e.getMessage());
         }
     }
 
@@ -71,6 +87,9 @@ public class Menu {
                     case 2:
                         createAccount();
                         break;
+                    case 0:
+                        Main.clear();
+                        return;
                     default:
                         Main.clear();
                         System.out.println("OPCAO INVALIDA");

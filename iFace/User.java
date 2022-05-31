@@ -2,7 +2,7 @@ import java.util.*;
 
 public class User implements Key {
     private String name;
-    private String lastName;
+    private String lastName = "";
     private String email;
     private String password;
 
@@ -59,6 +59,10 @@ public class User implements Key {
 
     public void setPost(Post post) {
         posts.add(post);
+    }
+
+    public String getNameLastName() {
+        return (lastName.isEmpty()) ? name : name+" "+lastName;
     }
 
     public String getName() {
