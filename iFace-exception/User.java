@@ -13,8 +13,6 @@ public class User implements Key {
 
     private ArrayList<Community> myCommunities = new ArrayList<Community>();
     private ArrayList<Community> communities = new ArrayList<Community>();
-    
-    private ArrayList<Post> posts = new ArrayList<Post>();
 
     public User(String name, String email, String password) {
         this.name = name;
@@ -57,10 +55,6 @@ public class User implements Key {
         communities.add(community);
     }
 
-    public void setPost(Post post) {
-        posts.add(post);
-    }
-
     public String getNameLastName() {
         return (lastName.isEmpty()) ? name : name+" "+lastName;
     }
@@ -94,10 +88,6 @@ public class User implements Key {
     }
     public ArrayList<Community> getCommunities() {
         return communities;
-    }
-
-    public ArrayList<Post> getPosts() {
-        return posts;
     }
 
     @Override
