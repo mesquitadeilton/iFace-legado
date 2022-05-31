@@ -1,74 +1,99 @@
 import java.util.*;
 
-public class User extends People implements Interface1 {
-    private ArrayList<User> friends;
-    private ArrayList<User> invitations;
+public class User implements Key {
+    private String name;
+    private String lastName = "";
+    private String email;
+    private String password;
 
-    private ArrayList<Chat> chats;
+    private ArrayList<User> friends = new ArrayList<User>();
+    private ArrayList<User> invitations = new ArrayList<User>();
+
+    private HashMap<User, ArrayList<Message>> chats = new HashMap<User, ArrayList<Message>>();
+
+    private ArrayList<Community> myCommunities = new ArrayList<Community>();
+    private ArrayList<Community> communities = new ArrayList<Community>();
     
-    private ArrayList<Community> communities;
-    private ArrayList<Community> myCommunities;
-
-    private ArrayList<Post> posts;
+    private ArrayList<Post> posts = new ArrayList<Post>();
 
     public User(String name, String email, String password) {
-        setName(name);
-        setEmail(email);
-        setPassowrd(password);
+        this.name = name;
+        this.email = email;
+        this.password = password;
+    }
 
-        friends = new ArrayList<User>();
-        invitations = new ArrayList<User>();
-
-        chats = new ArrayList<Chat>();
-        
-        communities = new ArrayList<Community>();
-        myCommunities = new ArrayList<Community>();
-
-        posts = new ArrayList<Post>();
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    public void setPassowrd(String password) {
+        this.password = password;
     }
 
     public void setFriend(User friend) {
-        this.friends.add(friend);
+        friends.add(friend);
+    }
+    public void setInvitation(User invitation) {
+        invitations.add(invitation);
     }
 
-    public void setInvitation(User user) {
-        this.invitations.add(user);
+    public void setChat(User key) {
+        chats.put(key, new ArrayList<Message>());
     }
 
-    public void setChat(Chat chat) {
-        this.chats.add(chat);
-    }
-
-    public void setComunity(Community community) {
-        this.communities.add(community);
+    public void setChatMessage(User key, Message message) {
+        chats.get(key).add(message);
     }
 
     public void setMyComunity(Community community) {
-        this.myCommunities.add(community);
+        myCommunities.add(community);
+    }
+    public void setComunity(Community community) {
+        communities.add(community);
     }
 
     public void setPost(Post post) {
-        this.posts.add(post);
+        posts.add(post);
+    }
+
+    public String getNameLastName() {
+        return (lastName.isEmpty()) ? name : name+" "+lastName;
+    }
+
+    public String getName() {
+        return name;
+    }
+    public String getLastName() {
+        return lastName;
+    }
+    public String getEmail() {
+        return email;
+    }
+    public String getPassword() {
+        return password;
     }
 
     public ArrayList<User> getFriends() {
         return friends;
     }
-
     public ArrayList<User> getInvitations() {
         return invitations;
     }
 
-    public ArrayList<Chat> getChats() {
+    public HashMap<User, ArrayList<Message>> getChats() {
         return chats;
-    }
-
-    public ArrayList<Community> getCommunities() {
-        return communities;
     }
 
     public ArrayList<Community> getMyCommunities() {
         return myCommunities;
+    }
+    public ArrayList<Community> getCommunities() {
+        return communities;
     }
 
     public ArrayList<Post> getPosts() {
@@ -77,6 +102,6 @@ public class User extends People implements Interface1 {
 
     @Override
     public String getKey() {
-        return getEmail();
+        return email;
     }
 }

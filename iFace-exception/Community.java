@@ -1,22 +1,19 @@
 import java.util.*;
 
-public class Community implements Interface1 {
+public class Community implements Key {
     private User creator;
     private String name;
     private String description;
     
-    private ArrayList<User> members;
-    private ArrayList<User> invitations;
+    private ArrayList<User> members = new ArrayList<User>();
+    private ArrayList<User> invitations = new ArrayList<User>();
 
-    private ArrayList<Post> posts;
+    private ArrayList<Message> feed = new ArrayList<Message>();
 
     public Community(User creator, String name, String description) {
         this.creator = creator;
         this.name = name;
         this.description = description;
-        
-        members = new ArrayList<User>();
-        invitations = new ArrayList<User>();
     }
 
     public void setCreator(User creator) {
@@ -32,15 +29,15 @@ public class Community implements Interface1 {
     }
 
     public void setMember(User member) {
-        this.members.add(member);
+        members.add(member);
     }
 
     public void setInvitation(User user) {
-        this.invitations.add(user);
+        invitations.add(user);
     }
 
-    public void setPost(Post post) {
-        this.posts.add(post);
+    public void setMessage(Message message) {
+        feed.add(message);
     }
 
     public User getCreator() {
@@ -63,8 +60,8 @@ public class Community implements Interface1 {
         return invitations;
     }
 
-    public ArrayList<Post> getPosts() {
-        return posts;
+    public ArrayList<Message> getFeed() {
+        return feed;
     }
 
     @Override

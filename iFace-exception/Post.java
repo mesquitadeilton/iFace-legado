@@ -1,25 +1,15 @@
-public class Post {
-    private User sender;
-    private String text;
+public class Post extends Message {
+    private boolean visibility = true;
 
     public Post(User sender, String text) {
-        this.sender = sender;
-        this.text = text;
+        super(sender, text);
     }
 
-    public void setSender(User sender) {
-        this.sender = sender;
+    public void setVisibility(boolean visibility) {
+        this.visibility = visibility;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public User getSender() {
-        return sender;
-    }
-
-    public String getText() {
-        return text;
+    public boolean getVisibility() {
+        return visibility;
     }
 }

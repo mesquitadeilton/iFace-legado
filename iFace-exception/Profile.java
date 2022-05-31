@@ -9,9 +9,10 @@ public class Profile {
 
     private void editProfile() throws IOException, InterruptedException {
         Main.clear();
-        int option;
+        int option = -1;
         do {
-            System.out.println("Editar perfil:");
+            System.out.println("         Editar Perfil        ");
+            System.out.println("------------------------------");
             System.out.println();
             System.out.println("|1| Nome");
             System.out.println("|2| Sobrenome");
@@ -21,83 +22,133 @@ public class Profile {
             System.out.println();
             System.out.print("> ");
     
-            option = Main.input.nextInt();
-            switch(option) {
-                case 1:
-                    System.out.println();
-                    System.out.print("Nome: ");
-                    String name = Main.input.next();
-                    connected.setName(name);
-                    Main.clear();
-                    System.out.println("Nome alterado");
-                    System.out.println("------------------------------");
-                    break;
-                case 2:
-                    System.out.println();
-                    System.out.print("Sobrenome: ");
-                    String lastName = Main.input.next();
-                    connected.setLastName(lastName);
-                    Main.clear();
-                    System.out.println("Sobrenome alterado");
-                    System.out.println("------------------------------");
-                    break;
-                case 3:
-                    System.out.println();
-                    System.out.print("Email: ");
-                    String email = Main.input.next();
-                    if(Main.search(Main.users, email) == null) {
-                        connected.setEmail(email);
+            try {
+                option = Integer.parseInt(Main.input.next());
+                switch(option) {
+                    case 1:
+                        System.out.println();
+                        System.out.print("Nome: ");
+                        String name = Main.input.next();
+                        if(!name.matches("[A-z]+")) throw new Exception("NOME NÃO PODE TER ACENTOS OU NÚMEROS");
+
+                        connected.setName(name);
                         Main.clear();
-                        System.out.println("Email alterado");
-                    System.out.println("------------------------------");
-                    }
-                    else {
-                        Main.clear();
-                        System.out.println("Email já cadastrado");
+                        System.out.println("Nome alterado com sucesso");
                         System.out.println("------------------------------");
-                    }
-                    break;
-                case 4:
-                    System.out.println();
-                    System.out.print("Senha: ");
-                    String password = Main.input.next();
-                    connected.setPassowrd(password);
-                    Main.clear();
-                    System.out.println("Senha alterada");
-                    System.out.println("------------------------------");
-                    break;
-                default:
-                    Main.clear();
+                        break;
+                    case 2:
+                        System.out.println();
+                        System.out.print("Sobrenome: ");
+                        String lastName = Main.input.next();
+                        if(!lastName.matches("[A-z]+")) throw new Exception("NOME NÃO PODE TER ACENTOS OU NÚMEROS");
+
+                        connected.setLastName(lastName);
+                        Main.clear();
+                        System.out.println("Sobrenome alterado com sucesso");
+                        System.out.println("------------------------------");
+                        break;
+                    case 3:
+                        System.out.println();
+                        System.out.print("Email: ");
+                        String email = Main.input.next();
+                        if(!email.matches("^([\\w\\-]+.)*[\\w\\-]+@([\\w\\-]+.)+([\\w\\-]{2,3})")) throw new Exception("EMAIL INVALIDO");
+
+                        if(Main.search(Main.users, email) == null) {
+                            connected.setEmail(email);
+                            Main.clear();
+                            System.out.println("Email alterado com sucesso");
+                        System.out.println("------------------------------");
+                        }
+                        else {
+                            Main.clear();
+                            System.out.println("EMAIL JÁ CADASTRADO");
+                            System.out.println("------------------------------");
+                        }
+                        break;
+                    case 4:
+                        System.out.println();
+                        System.out.print("Senha: ");
+                        String password = Main.input.next();
+                        connected.setPassowrd(password);
+                        Main.clear();
+                        System.out.println("Senha alterada com sucesso");
+                        System.out.println("------------------------------");
+                        break;
+                    case 0:
+                        Main.clear();
+                        return;
+                    default:
+                        Main.clear();
+                        System.out.println("OPCAO INVALIDA");
+                        System.out.println("------------------------------");
+                }
+            } catch(NumberFormatException e) {
+                Main.clear();
+                System.out.println("OPCAO INVALIDA");
+                System.out.println("------------------------------");
+            } catch(Exception e) {
+                Main.clear();
+                System.out.println(e.getMessage());
+                System.out.println("------------------------------");
             }
         } while(option != 0);
     }
 
-    private void removeAccount() {
-        for(User friend : connected.getFriends()) 
-            if(friend.getFriends().contains(connected)) friend.getFriends().remove(connected);
+    private boolean removeAccount() throws IOException, InterruptedException {
+        Main.clear();
+        int option = -1;
+        do {
+            System.out.println("        Encerrar conta        ");
+            System.out.println("------------------------------");
+            System.out.println();
+            System.out.println("|1| Desejo encerrar minha conta");
+            System.out.println();
+            System.out.println("|0| Voltar");
+            System.out.println();
+            System.out.print("> ");
+                
+            try {
+                option = Integer.parseInt(Main.input.next());
+                switch(option) {
+                    case 1:
+                        for(User friend : connected.getFriends())
+                            if(friend.getChats().containsKey(connected)) friend.getChats().remove(connected);
 
-        for(Chat chat : connected.getChats()) {
-            if(chat.getUsers()[0].equals(connected)) {
-                for(Chat chatFriend : chat.getUsers()[1].getChats())
-                    if(chatFriend.equals(chat)) chat.getUsers()[1].getChats().remove(chat);
+                        for(User friend : connected.getFriends())  friend.getFriends().remove(connected);
+
+                        for(Community community : connected.getCommunities()) community.getMembers().remove(connected);
+
+                        for(Community myCommunity : connected.getMyCommunities()) {
+                            for(User member : myCommunity.getMembers())
+                                member.getCommunities().remove(myCommunity);
+                        }
+
+                        Main.users.remove(connected);
+                        return false;
+                    case 0:
+                        Main.clear();
+                        return true;
+                    default:
+                        Main.clear();
+                        System.out.println("OPCAO INVALIDA");
+                        System.out.println("------------------------------");
+                }
+            } catch(Exception e) {
+                Main.clear();
+                System.out.println("OPCAO INVALIDA");
+                System.out.println("------------------------------");
             }
-        }
-
-        for(Community community : connected.getCommunities())
-            community.getMembers().remove(connected);
-
-        for(Community myCommunity : connected.getMyCommunities()) {
-            for(User member : myCommunity.getMembers())
-                if(member.getCommunities().contains(myCommunity)) member.getCommunities().remove(myCommunity);
-        }
-
-        Main.users.remove(connected);
+        } while(option != 0);
+        
+        return true;
     }
 
     private boolean profile() throws IOException, InterruptedException {
-        int option;
+        Main.clear();
+        int option = -1;
         do {
-            Main.clear();
+            System.out.println("            Perfil            ");
+            System.out.println("------------------------------");
             System.out.println("Nome: "+connected.getName());
             System.out.println("Sobrenome: " +connected.getLastName());
             System.out.println("Email: "+connected.getEmail());
@@ -109,16 +160,28 @@ public class Profile {
             System.out.println();
             System.out.print("> ");
 
-            option = Main.input.nextInt();
-            switch(option) {
-                case 1:
-                    editProfile();
-                    break;
-                case 2:
-                    removeAccount();
-                    return false;
-                default:
-                    Main.clear();
+            try {
+                option = Integer.parseInt(Main.input.next());
+                switch(option) {
+                    case 1:
+                        editProfile();
+                        break;
+                    case 2:
+                        if(!removeAccount()) return false;
+                        break;
+                    case 0:
+                        Main.clear();
+                        return true;
+                    default:
+                        Main.clear();
+                        System.out.println("OPCAO INVALIDA");
+                        System.out.println("------------------------------");
+                }
+            }
+            catch(Exception e) {
+                Main.clear();
+                System.out.println("OPCAO INVALIDA");
+                System.out.println("------------------------------");
             }
         } while(option != 0);
         return true;
@@ -131,7 +194,7 @@ public class Profile {
             int i = 0;
             System.out.println("Convite de: ");
             for(User user : connected.getInvitations()) {
-                System.out.println("|"+(i+1)+"| "+user.getNameLastName());
+                System.out.println("|"+(i+1)+"| "+user.getName());
                 i++;
             }
             System.out.println();
@@ -142,7 +205,7 @@ public class Profile {
             option = Main.input.nextInt();
             if(option != 0) {
                 Main.clear();
-                System.out.println(connected.getInvitations().get(option-1).getNameLastName());
+                System.out.println(connected.getInvitations().get(option-1).getName());
                 System.out.println();
                 System.out.println("|1| Aceitar");
                 System.out.println("|2| Recusar");
@@ -176,7 +239,7 @@ public class Profile {
             if(!connected.getFriends().isEmpty()) {
                 System.out.println("Amigos:");
                 for(User u : connected.getFriends())
-                    System.out.println(u.getNameLastName());
+                    System.out.println(u.getName());
             }
             else System.out.println("Sem amigos");
 
@@ -215,36 +278,6 @@ public class Profile {
         } while(option != 0);
     }
 
-    private void selectChat(User user) throws IOException, InterruptedException {
-        String text;
-        do {
-            Main.clear();
-            System.out.println("Conversa com "+user.getNameLastName());
-            Chat chat = Main.searchChat(connected, user);
-            if(chat != null) {
-                for(Message message : chat.getMessages())
-                    System.out.println(message.getSender().getNameLastName()+" disse: "+message.getText());
-            }
-            else {
-                User[] users = {connected, user};
-                chat = new Chat(users);
-                connected.setChat(chat);
-                user.setChat(chat);
-            }
-            
-            System.out.println();
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
-            text = Main.input.nextLine();
-
-            if(!text.equals("0") && !text.isEmpty()) {
-                Message message = new Message(connected, user, text);
-                chat.setMessage(message);
-            }
-        } while(!text.equals("0"));
-    }
-
     private void chats() throws IOException, InterruptedException {
         int option;
         do {
@@ -253,7 +286,7 @@ public class Profile {
                 System.out.println("Chat com:");
                 int i = 0;
                 for(User user : connected.getFriends()) {
-                    System.out.println("|"+(i+1)+"| "+user.getNameLastName());
+                    System.out.println("|"+(i+1)+"| "+user.getName());
                     i++;
                 }
             }
@@ -265,7 +298,38 @@ public class Profile {
             System.out.print("> ");
             option = Main.input.nextInt();
 
-            if((option != 0) && option <= (connected.getFriends().size())) selectChat(connected.getFriends().get(option-1));
+            User friend = null;
+            if(option !=0) friend = connected.getFriends().get(option-1);
+
+            if((option != 0) && (friend != null)) {
+                String text;
+                do {
+                    Main.clear();
+                    System.out.println("Conversa com "+friend.getName());
+                    
+                    if(connected.getChats().get(friend) != null && !connected.getChats().get(friend).isEmpty()) {
+                        for(Message message : connected.getChats().get(friend))
+                            System.out.println(message.getSender().getName()+" disse: "+message.getText());
+                    }
+                    else {
+                        connected.setChat(friend);
+                        friend.setChat(connected);
+                    }
+
+                    System.out.println();
+                    System.out.println("|0| Voltar");
+                    System.out.println();
+                    System.out.print("> ");
+                    text = Main.input.nextLine();
+
+                    if(!text.equals("0") && !text.isBlank()) {
+                        Message message = new Message(connected, text);
+
+                        connected.setChatMessage(friend, message);
+                        friend.setChatMessage(connected, message);
+                    }
+                } while(!text.equals("0"));
+            }
         } while(option != 0);
     }
 
@@ -460,85 +524,56 @@ public class Profile {
         } while(option != 0);
     }
 
-    private void myFeed() throws IOException, InterruptedException {
+    private void feed() throws IOException, InterruptedException {
         String text;
         do {
             Main.clear();
-            if(!connected.getPosts().isEmpty()) {
-                System.out.println("Minhas publicações: ");
-                for(Post post : connected.getPosts())
-                    System.out.println(post.getSender().getNameLastName()+" publicou: "+post.getText());
+            System.out.println("       Feed de notícias       ");
+            System.out.println("------------------------------");
+            for(User user : Main.users) {
+                for(Post post : user.getPosts()) {
+                    if(user.equals(connected) || post.getVisibility())
+                        System.out.println(post.getSender().getNameLastName()+" publicou: "+post.getText());
+                    else
+                        if(connected.getFriends().contains(user))
+                            System.out.println(post.getSender().getNameLastName()+" publicou: "+post.getText());
+                }
             }
-            else System.out.println("Sem publicações");
             System.out.println();
             System.out.println("|0| Voltar");
             System.out.println();
             System.out.print("> ");
             text = Main.input.nextLine();
 
-            if(!text.equals("0") && !text.isEmpty()) {
+            if(!text.equals("0") && !text.isBlank()) {
+                int option;
+                System.out.println();
+                System.out.println("Quem pode ver esta publicação:");
+                System.out.println("|1| Amigos");
+                System.out.println("|2| Todos");
+                System.out.println();
+                System.out.print("> ");
+                option = Main.input.nextInt();
+
                 Post post = new Post(connected, text);
+                if(option == 1) 
+                    post.setVisibility(false);
+                else
+                    post.setVisibility(true);
                 connected.setPost(post);
             }
         } while(!text.equals("0"));
     }
 
-    private void feedFriends() throws IOException, InterruptedException {
-        int option;
-        do {
-            Main.clear();
-            if(!connected.getFriends().isEmpty()) {
-                System.out.println("Feed de notícias: ");
-                for(User user : connected.getFriends()) {
-                    for(Post post : user.getPosts()) 
-                        System.out.println(post.getSender().getNameLastName()+" publicou: "+post.getText());
-
-                    System.out.println();
-                }
-            }
-            else {
-                System.out.println("Sem amigos");
-                System.out.println();
-            }
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
-            option = Main.input.nextInt();
-        } while(option != 0);
-    }
-
-    private void feed() throws IOException, InterruptedException {
-        int option;
-        do {
-            Main.clear();
-            System.out.println("|1| Minhas publicações");
-            System.out.println("|2| Publicações dos amigos");
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
-
-            option = Main.input.nextInt();
-            switch(option) {
-                case 1:
-                    myFeed();
-                    break;
-                case 2:
-                    feedFriends();
-                    break;
-                default:
-                    Main.clear();
-            }
-        } while(option != 0);
-    }
-
     public void menu() throws IOException, InterruptedException {
-        int option;
+        Main.clear();
+        int option = -1;
         do {
-            Main.clear();
             System.out.println(connected.getNameLastName());
+            System.out.println("------------------------------");
             System.out.println("Amigos: "+connected.getFriends().size());
             System.out.println("Comunidades: "+connected.getCommunities().size());
-            System.out.println("Conversas: "+connected.getChats().size());
+            System.out.println(connected.getChats());
             System.out.println();
 
             System.out.println("|1| Perfil");
@@ -550,28 +585,40 @@ public class Profile {
             System.out.println();
             System.out.print("> ");
 
-            option = Main.input.nextInt();
-            switch(option) {
-                case 1:
-                    if(!profile()) {
+            try {
+                option = Integer.parseInt(Main.input.next());
+                switch(option) {
+                    case 1:
+                        if(!profile()) {
+                            Main.clear();
+                            return;
+                        }
+                        break;
+                    case 2:
+                        friends();
+                        break;
+                    case 3:
+                        chats();
+                        break;
+                    case 4:
+                        communities();
+                        break;
+                    case 5:
+                        feed();
+                        break;
+                        case 0:
                         Main.clear();
                         return;
-                    }
-                    break;
-                case 2:
-                    friends();
-                    break;
-                case 3:
-                    chats();
-                    break;
-                case 4:
-                    communities();
-                    break;
-                case 5:
-                    feed();
-                    break;
-                default:
-                    Main.clear();
+                    default:
+                        Main.clear();
+                        System.out.println("OPCAO INVALIDA");
+                        System.out.println("------------------------------");
+                }
+            }
+            catch(Exception e) {
+                Main.clear();
+                System.out.println("OPCAO INVALIDA");
+                System.out.println("------------------------------");
             }
         } while(option != 0);
     }
