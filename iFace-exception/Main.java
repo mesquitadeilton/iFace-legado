@@ -6,6 +6,7 @@ public class Main {
 
     static ArrayList<User> users = new ArrayList<User>();
     static ArrayList<Community> communities = new ArrayList<Community>();
+    static ArrayList<Post> feed = new ArrayList<Post>();
 
     public static <T extends Key>T search(ArrayList<T> list, String key) {
         for(T element : list) 
