@@ -3,8 +3,9 @@ import java.io.*;
 public class Menu {
     private static User login() throws IOException, InterruptedException {
         Main.clear();
-        System.out.println("         Fazer login          ");
-        System.out.println("------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("         Bem-vindo ao iFace | Fazer login         ");
+        System.out.println("--------------------------------------------------");
         System.out.print("Email: ");
         String email = Main.input.next();
         User user = Main.search(Main.users, email);
@@ -25,17 +26,20 @@ public class Menu {
 
     private static void createAccount() throws IOException, InterruptedException {
         Main.clear();
-        System.out.println("         Criar conta          ");
-        System.out.println("------------------------------");
+        System.out.println("--------------------------------------------------");
+        System.out.println("         Bem-vindo ao iFace | Criar conta         ");
+        System.out.println("--------------------------------------------------");
         System.out.print("Nome: ");
 
         try {
             String name = Main.input.next();
             if(!name.matches("[A-z]+")) throw new Exception("NOME NÃO PODE TER ACENTOS OU NÚMEROS");
 
+            
             Main.clear();
-            System.out.println("         Criar conta          ");
-            System.out.println("------------------------------");
+            System.out.println("--------------------------------------------------");
+            System.out.println("         Bem-vindo ao iFace | Criar conta         ");
+            System.out.println("--------------------------------------------------");
             System.out.println("Olá "+name);
             System.out.println();
             System.out.print("Email: ");
@@ -65,9 +69,9 @@ public class Menu {
     public void print() throws IOException, InterruptedException {
         int option = -1;
         do {
-            System.out.println("------------------------------");
-            System.out.println("      Bem-vindo ao iFace      ");
-            System.out.println("------------------------------");
+            System.out.println("--------------------------------------------------");
+            System.out.println("                Bem-vindo ao iFace                ");
+            System.out.println("--------------------------------------------------");
             System.out.println("|1| Fazer login");
             System.out.println("|2| Criar conta");
             System.out.println("|0| Sair");
