@@ -8,7 +8,7 @@ public class Community implements Key {
     private ArrayList<User> members = new ArrayList<User>();
     private ArrayList<User> invitations = new ArrayList<User>();
 
-    private ArrayList<Message> feed = new ArrayList<Message>();
+    private ArrayList<Message> chat = new ArrayList<Message>();
 
     public Community(User creator, String name, String description) {
         this.creator = creator;
@@ -37,7 +37,7 @@ public class Community implements Key {
     }
 
     public void setMessage(Message message) {
-        feed.add(message);
+        chat.add(message);
     }
 
     public User getCreator() {
@@ -60,8 +60,8 @@ public class Community implements Key {
         return invitations;
     }
 
-    public ArrayList<Message> getFeed() {
-        return feed;
+    public ArrayList<Message> getChat() {
+        return chat;
     }
 
     @Override
