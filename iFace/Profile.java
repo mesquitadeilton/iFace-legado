@@ -276,6 +276,8 @@ public class Profile {
                         if(user != null) {
                             if(user.getInvitations().contains(connected) || connected.getInvitations().contains(user))
                                 throw new Exception("Convite para "+user.getNameLastName()+" já enviado");
+                            else if(connected.getFriends().contains(user))
+                                throw new Exception(user.getNameLastName()+" já faz parte da sua lista de amigos");
 
                             user.setInvitation(connected);
                             Main.clear();
@@ -381,26 +383,32 @@ public class Profile {
     private void addComunity() throws IOException, InterruptedException {
         Main.input.nextLine();
         System.out.println();
-        System.out.print("Nome da comunidade: ");
+        System.out.print("Buscar comunidade pelo nome: ");
         String name = Main.input.nextLine();
         Main.clear();
         Community community = Main.search(Main.communities, name);
-        if(community != null) {
-            community.setInvitation(connected);
-            System.out.println("Convite enviado para fazer parte de "+community.getName());
-            System.out.println("------------------------------");
-        }
-        else {
-            System.out.println("COMUNIDADE NÃO ENCONTRADA");
-            System.out.println("------------------------------");
+        try {
+            if(community != null) {
+                if(community.getCreator().equals(connected) || connected.getCommunities().contains(community))
+                    throw new Exception("Você já faz parte de "+community.getName());
+                community.setInvitation(connected);
+                System.out.println("Convite enviado para fazer parte de "+community.getName());
+            }
+            else {
+                System.out.println("COMUNIDADE NÃO ENCONTRADA");
+            }
+        } catch(Exception e) {
+            Main.clear();
+            System.out.println(e.getMessage());
         }
     }
 
     private void createComunity() throws IOException, InterruptedException {
         Main.clear();
         Main.input.nextLine();
-        System.out.println("Nova comunidade");
-        System.out.println();
+        System.out.println("--------------------------------------------------");
+        System.out.println("iFace | Comunidades > Criar comunidade");
+        System.out.println("--------------------------------------------------");
         System.out.print("Nome: ");
         String name = Main.input.nextLine();
     
@@ -412,27 +420,27 @@ public class Profile {
             Community newCommunity = new Community(connected, name, description);
             Main.communities.add(newCommunity);
             connected.setMyComunity(newCommunity);
+            connected.setComunity(newCommunity);
 
             Main.clear();
             System.out.println("Comunidade criada");
-            System.out.println("------------------------------");
         }
         else {
             Main.clear();
             System.out.println("COMUNIDADE JÁ EXISTE");
-            System.out.println("------------------------------");
         }
     }
 
     private boolean selectInvitationComunity(Community community) throws IOException, InterruptedException {
-        int option;
+        Main.clear();
+        int option = -1;
         do {
-            Main.clear();
-
-            System.out.println("Convites para a comunidade "+community.getName()+":");
+            System.out.println("--------------------------------------------------");
+            System.out.println("iFace | Comunidades > Convites para "+community.getName());
+            System.out.println("--------------------------------------------------");
             int j = 0;
             for(User u : community.getInvitations()) {
-                System.out.println("|"+(j+1)+"| "+u.getName());
+                System.out.println("|"+(j+1)+"| "+u.getNameLastName());
                 j++;
             }
             System.out.println();
@@ -440,38 +448,46 @@ public class Profile {
             System.out.println();
             System.out.print("> ");
 
-            option = Main.input.nextInt();
-            if(option != 0) {
-                int action;
-                System.out.println();
-                System.out.println("|1| Aceitar novo membro");
-                System.out.println("|2| Recusar novo membro");
-                System.out.println("|0| Voltar");
-                System.out.println();
-                System.out.print("> ");
+            try {
+                option = Integer.parseInt(Main.input.next());
+                if(option != 0) {
+                    int action;
+                    System.out.println();
+                    System.out.println("Convite de "+community.getInvitations().get(option-1).getNameLastName()+" para fazer parte de "+community.getName()+":");
+                    System.out.println();
+                    System.out.println("|1| Aceitar");
+                    System.out.println("|2| Recusar");
+                    System.out.println("|0| Voltar");
+                    System.out.println();
+                    System.out.print("> ");
 
-                action = Main.input.nextInt();
-                Main.clear();
-                switch(action) {
-                    case 1:
-                        community.setMember(community.getInvitations().get(option-1));
-                        community.getInvitations().get(option-1).setComunity(community);
-                        community.getInvitations().remove(option-1);
-            
-                        System.out.println("NOVO MEMBRO ADICIONADO NA COMUNIDADE");
-                        System.out.println("------------------------------");
-                        return false;
-                    case 2:
-                        community.getInvitations().remove(option-1);
+                    action = Integer.parseInt(Main.input.next());
+                    Main.clear();
+                    switch(action) {
+                        case 1:
+                            community.setMember(community.getInvitations().get(option-1));
+                            community.getInvitations().get(option-1).setComunity(community);
+                            community.getInvitations().remove(option-1);
+                
+                            System.out.println("Novo membro adicionada na comunidade "+community.getName());
+                            return false;
+                        case 2:
+                            community.getInvitations().remove(option-1);
 
-                        System.out.println("NOVO MEMBRO RECUSADO NA COMUNIDADE");
-                        System.out.println("------------------------------");
-                        return false;
-                    default:
-                        Main.clear();
+                            System.out.println("Membro adicionada na comunidade "+community.getName());
+                            return false;
+                        case 0:
+                            Main.clear();
+                            return false;
+                        default:
+                            Main.clear();
+                            System.out.println("OPCAO INVALIDA");
+                    }
                 }
+            } catch(Exception e) {
+                Main.clear();
+                System.out.println("OPCAO INVALIDA");
             }
-            Main.clear();
         } while(option != 0);
 
         return true;
@@ -479,10 +495,12 @@ public class Profile {
 
     private void invitationComunity() throws IOException, InterruptedException {
         Main.clear();
-        int option;
+        int option = -1;
         do {
             int i = 0;
-            System.out.println("Convite para: ");
+            System.out.println("--------------------------------------------------");
+            System.out.println("iFace | Comunidades > Minhas comunidades > Convites");
+            System.out.println("--------------------------------------------------");
             for(Community c : connected.getMyCommunities()) {
                 if(!c.getInvitations().isEmpty()) {
                     System.out.println("|"+(i+1)+"| "+c.getName());
@@ -494,10 +512,15 @@ public class Profile {
             System.out.println();
             System.out.print("> ");
 
-            option = Main.input.nextInt();
-            if(option != 0) {
-                boolean find = selectInvitationComunity(connected.getMyCommunities().get(option-1));
-                if(find == false) return;
+            try {
+                option = Integer.parseInt(Main.input.next());
+                if(option != 0) {
+                    boolean find = selectInvitationComunity(connected.getMyCommunities().get(option-1));
+                    if(find == false) return;
+                }
+            } catch(Exception e) {
+                Main.clear();
+                System.out.println("OPCAO INVALIDA");
             }
         } while (option != 0);
         Main.clear();
@@ -505,10 +528,12 @@ public class Profile {
 
     private void myCommunities() throws IOException, InterruptedException {
         Main.clear();
-        int option;
+        int option = -1;
         do {
+            System.out.println("--------------------------------------------------");
+            System.out.println("iFace | Comunidades > Minhas comunidades");
+            System.out.println("--------------------------------------------------");
             if(!connected.getMyCommunities().isEmpty()) {
-                System.out.println("Minhas comunidades: ");
                 for(Community c : connected.getMyCommunities())
                         System.out.println(c.getName());
             }
@@ -516,33 +541,112 @@ public class Profile {
             
             System.out.println();
             System.out.println("|1| Criar comunidade");
+            boolean invitation = false;
             for(Community c : connected.getMyCommunities()) {
-                if(!c.getInvitations().isEmpty()) System.out.println("|2| Convites das minhas comunidades");
+                if(!c.getInvitations().isEmpty()) {
+                    invitation = true;
+                    System.out.println("|2| Convites das minhas comunidades");
+                    break;
+                }
             }
             System.out.println("|0| Voltar");
             System.out.println();
             System.out.print("> ");
     
-            option = Main.input.nextInt();
-            switch(option) {
-                case 1:
-                    createComunity();
-                    break;
-                case 3:
-                    invitationComunity();
-                    break;
-                default:
+            try {
+                option = Integer.parseInt(Main.input.next());
+                switch(option) {
+                    case 1:
+                        createComunity();
+                        break;
+                    case 2:
+                        if(invitation)
+                            invitationComunity();
+                        else {
+                            Main.clear();
+                            System.out.println("OPCAO INVALIDA");
+                        }
+                        break;
+                    case 0:
+                        Main.clear();
+                        return;
+                    default:
+                        Main.clear();
+                        System.out.println("OPCAO INVALIDA");
+                }
+            } catch(Exception e) {
+                Main.clear();
+                System.out.println("OPCAO INVALIDA");
+            }
+        } while(option != 0);
+    }
+
+    private void chatCommunity() throws IOException, InterruptedException {
+        Main.clear();
+        int option = -1;
+        do {
+            System.out.println("--------------------------------------------------");
+            System.out.println("iFace | Comunidades > Recados");
+            System.out.println("--------------------------------------------------");
+            int i = 0;
+            for(Community community : connected.getCommunities()) {
+                System.out.println("|"+(i+1)+"| "+community.getName());
+                i++;
+            }
+
+            System.out.println();
+            System.out.println("|0| Voltar");
+            System.out.println();
+            System.out.print("> ");
+            
+            try {
+                option = Integer.parseInt(Main.input.next());
+                Main.clear();
+
+                if((option != 0)) {
+                    Community community = connected.getCommunities().get(option-1);
+                    String text;
+                    do {
+                        Main.clear();
+                        System.out.println("--------------------------------------------------");
+                        System.out.println("iFace | Comunidades > Recados > "+community.getName());
+                        System.out.println("--------------------------------------------------");
+                        
+                        if(!connected.getCommunities().isEmpty()) {
+                            for(Message message : community.getChat())
+                                System.out.println(message.getDate()+" "+message.getSender().getNameLastName()+" disse: "+message.getText());
+                        }
+
+                        System.out.println();
+                        System.out.println("|0| Voltar");
+                        System.out.println();
+                        System.out.print("> ");
+                        text = Main.input.nextLine();
+
+                        if(!text.equals("0") && !text.isEmpty()) {
+                            String date = new SimpleDateFormat("[dd/MM/yyyy][HH:mm]").format(Calendar.getInstance().getTime());
+                            Message message = new Message(connected, text, date);
+
+                            community.setMessage(message);
+                        }
+                    } while(!text.equals("0"));
                     Main.clear();
+                }
+            } catch(Exception e) {
+                Main.clear();
+                System.out.println("OPCAO INVALIDA");
             }
         } while(option != 0);
     }
 
     private void communities() throws IOException, InterruptedException {
         Main.clear();
-        int option;
+        int option = -1;
         do {
+            System.out.println("--------------------------------------------------");
+            System.out.println("iFace | Comunidades");
+            System.out.println("--------------------------------------------------");
             if(!connected.getCommunities().isEmpty()) {
-                System.out.println("Comunidades que participo: ");
                 for(Community c : connected.getCommunities())
                     System.out.println(c.getName());
             }
@@ -551,20 +655,36 @@ public class Profile {
             System.out.println();
             System.out.println("|1| Buscar comunidade");
             System.out.println("|2| Minhas comunidades");
+            if(!connected.getCommunities().isEmpty()) System.out.println("|3| Recados");
             System.out.println("|0| Voltar");
             System.out.println();
             System.out.print("> ");
 
-            option = Main.input.nextInt();
-            switch(option) {
-                case 1:
-                    addComunity();
-                    break;
-                case 2:
-                    myCommunities();
-                    break;
-                default:
-                    Main.clear();
+            try {
+                option = Integer.parseInt(Main.input.next());
+                switch(option) {
+                    case 1:
+                        addComunity();
+                        break;
+                    case 2:
+                        myCommunities();
+                        break;
+                    case 3:
+                        if(!connected.getCommunities().isEmpty())
+                            chatCommunity();
+                        else
+                            throw new Exception();
+                        break;
+                    case 0:
+                        Main.clear();
+                        return;
+                    default:
+                        Main.clear();
+                        System.out.println("OPCAO INVALIDA");
+                }
+            } catch(Exception e) {
+                Main.clear();
+                System.out.println("OPCAO INVALIDA");
             }
         } while(option != 0);
     }
