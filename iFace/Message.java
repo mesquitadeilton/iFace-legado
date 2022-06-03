@@ -1,9 +1,11 @@
+import java.util.*;
+
 public class Message {
     private User sender;
     private String text;
-    private String date;
+    private Date date;
 
-    public Message(User sender, String text, String date) {
+    public Message(User sender, String text, Date date) {
         this.sender = sender;
         this.text = text;
         this.date = date;
@@ -17,7 +19,7 @@ public class Message {
         this.text = text;
     }
 
-    public void setDate(String date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 
@@ -29,7 +31,7 @@ public class Message {
         return text;
     }
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 }

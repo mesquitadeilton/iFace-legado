@@ -66,6 +66,6 @@ public class Community implements Key {
 
     @Override
     public String getKey() {
-        return name;
+        return name.toUpperCase();
     }
 }

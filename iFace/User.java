@@ -92,6 +92,6 @@ public class User implements Key {
 
     @Override
     public String getKey() {
-        return email;
+        return email.toUpperCase();
     }
 }

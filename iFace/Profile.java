@@ -9,21 +9,28 @@ public class Profile {
         this.connected = connected;
     }
 
+    private void title(String section) {
+        System.out.println("--------------------------------------------------");
+        System.out.println("iFace | "+section);
+        System.out.println("--------------------------------------------------");
+    }
+
+    private void endOfMenu() {
+        System.out.println("|0| Voltar");
+        System.out.println();
+        System.out.print("> ");
+    }
+
     private void editProfile() throws IOException, InterruptedException {
-        Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Perfil > Editar perfil");
-            System.out.println("--------------------------------------------------");
+            title("Perfil > Editar perfil");
             System.out.println();
             System.out.println("|1| Nome");
             System.out.println("|2| Sobrenome");
             System.out.println("|3| Email");
             System.out.println("|4| Senha");
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
     
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -33,6 +40,7 @@ public class Profile {
                         System.out.print("Nome: ");
                         String name = Main.input.next();
                         if(!name.matches("[A-z]+")) throw new Exception("NOME NÃO PODE TER ACENTOS OU NÚMEROS");
+                        name = name.substring(0,1).toUpperCase().concat(name.substring(1));
 
                         connected.setName(name);
                         Main.clear();
@@ -43,6 +51,7 @@ public class Profile {
                         System.out.print("Sobrenome: ");
                         String lastName = Main.input.next();
                         if(!lastName.matches("[A-z]+")) throw new Exception("NOME NÃO PODE TER ACENTOS OU NÚMEROS");
+                        lastName = lastName.substring(0,1).toUpperCase().concat(lastName.substring(1));
 
                         connected.setLastName(lastName);
                         Main.clear();
@@ -53,16 +62,11 @@ public class Profile {
                         System.out.print("Email: ");
                         String email = Main.input.next();
                         if(!email.matches("^([\\w\\-]+.)*[\\w\\-]+@([\\w\\-]+.)+([\\w\\-]{2,3})")) throw new Exception("EMAIL INVALIDO");
-
-                        if(Main.search(Main.users, email) == null) {
-                            connected.setEmail(email);
-                            Main.clear();
-                            System.out.println("Email alterado com sucesso");
-                        }
-                        else {
-                            Main.clear();
-                            System.out.println("EMAIL JÁ CADASTRADO");
-                        }
+                        if(Main.search(Main.users, email.toUpperCase()) != null)  throw new Exception("EMAIlL JÁ CADASTRADO");
+                        
+                        connected.setEmail(email);
+                        Main.clear();
+                        System.out.println("Email alterado com sucesso");
                         break;
                     case 4:
                         System.out.println();
@@ -90,17 +94,12 @@ public class Profile {
     }
 
     private boolean removeAccount() throws IOException, InterruptedException {
-        Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Perfil > Encerrar conta");
-            System.out.println("--------------------------------------------------");
+            title("Perfil > Encerrar conta");
             System.out.println();
-            System.out.println("|1| Desejo encerrar minha conta");
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            System.out.println("|1| Encerrar minha conta");
+            endOfMenu();
                 
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -138,7 +137,6 @@ public class Profile {
                 System.out.println("OPCAO INVALIDA");
             }
         } while(option != 0);
-        
         return true;
     }
 
@@ -146,9 +144,7 @@ public class Profile {
         Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Perfil");
-            System.out.println("--------------------------------------------------");
+            title("Perfil");
             System.out.println("Nome: "+connected.getName());
             System.out.println("Sobrenome: " +connected.getLastName());
             System.out.println("Email: "+connected.getEmail());
@@ -156,12 +152,12 @@ public class Profile {
 
             System.out.println("|1| Editar perfil");
             System.out.println("|2| Encerrar conta do iFace");
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
 
             try {
                 option = Integer.parseInt(Main.input.next());
+                
+                Main.clear();
                 switch(option) {
                     case 1:
                         editProfile();
@@ -170,14 +166,11 @@ public class Profile {
                         if(!removeAccount()) return false;
                         break;
                     case 0:
-                        Main.clear();
                         return true;
                     default:
-                        Main.clear();
                         System.out.println("OPCAO INVALIDA");
                 }
-            }
-            catch(Exception e) {
+            } catch(Exception e) {
                 Main.clear();
                 System.out.println("OPCAO INVALIDA");
             }
@@ -188,18 +181,14 @@ public class Profile {
     private void invitationFriend() throws IOException, InterruptedException {
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Amigos > Solicitações de amizade");
-            System.out.println("--------------------------------------------------");
+            title("Amigos > Solicitações de amizade");
             int i = 0;
             for(User user : connected.getInvitations()) {
                 System.out.println("|"+(i+1)+"| "+user.getNameLastName());
                 i++;
             }
             System.out.println();
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
 
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -210,9 +199,7 @@ public class Profile {
                     System.out.println();
                     System.out.println("|1| Aceitar");
                     System.out.println("|2| Recusar");
-                    System.out.println("|0| Voltar");
-                    System.out.println();
-                    System.out.print("> ");
+                    endOfMenu();
 
                     int action = Integer.parseInt(Main.input.next());
                     Main.clear();
@@ -244,9 +231,7 @@ public class Profile {
         Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Amigos");
-            System.out.println("--------------------------------------------------");
+            title("Amigos");
             if(!connected.getFriends().isEmpty()) {
                 for(User u : connected.getFriends())
                     System.out.println(u.getNameLastName());
@@ -256,9 +241,7 @@ public class Profile {
             System.out.println();
             System.out.println("|1| Buscar novo amigo");
             if(!connected.getInvitations().isEmpty()) System.out.println("|2| Solicitações de amizade");
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
 
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -316,22 +299,18 @@ public class Profile {
         Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Recados");
-            System.out.println("--------------------------------------------------");
+            title("Recados");
             if(!connected.getFriends().isEmpty()) {
                 int i = 0;
                 for(User user : connected.getFriends()) {
-                    System.out.println("|"+(i+1)+"| "+user.getName());
+                    System.out.println("|"+(i+1)+"| "+user.getNameLastName());
                     i++;
                 }
             }
             else System.out.println("Sem amigos");
 
             System.out.println();
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
             
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -344,9 +323,7 @@ public class Profile {
                     String text;
                     do {
                         Main.clear();
-                        System.out.println("--------------------------------------------------");
-                        System.out.println("iFace | Recados > "+connected.getFriends().get(option-1).getNameLastName());
-                        System.out.println("--------------------------------------------------");
+                        title("Recados > "+connected.getFriends().get(option-1).getNameLastName());
                         
                         if(connected.getChats().get(friend) != null && !connected.getChats().get(friend).isEmpty()) {
                             for(Message message : connected.getChats().get(friend))
@@ -358,14 +335,11 @@ public class Profile {
                         }
 
                         System.out.println();
-                        System.out.println("|0| Voltar");
-                        System.out.println();
-                        System.out.print("> ");
+                        endOfMenu();
                         text = Main.input.nextLine();
 
                         if(!text.equals("0") && !text.isEmpty()) {
-                            String date = new SimpleDateFormat("[dd/MM/yyyy][HH:mm]").format(Calendar.getInstance().getTime());
-                            Message message = new Message(connected, text, date);
+                            Message message = new Message(connected, text, Calendar.getInstance().getTime());
 
                             connected.setChatMessage(friend, message);
                             friend.setChatMessage(connected, message);
@@ -406,9 +380,7 @@ public class Profile {
     private void createComunity() throws IOException, InterruptedException {
         Main.clear();
         Main.input.nextLine();
-        System.out.println("--------------------------------------------------");
-        System.out.println("iFace | Comunidades > Criar comunidade");
-        System.out.println("--------------------------------------------------");
+        title("Comunidades > Criar comunidade");
         System.out.print("Nome: ");
         String name = Main.input.nextLine();
     
@@ -435,18 +407,14 @@ public class Profile {
         Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Comunidades > Convites para "+community.getName());
-            System.out.println("--------------------------------------------------");
+            title("Comunidades > Convites para "+community.getName());
             int j = 0;
             for(User u : community.getInvitations()) {
                 System.out.println("|"+(j+1)+"| "+u.getNameLastName());
                 j++;
             }
             System.out.println();
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
 
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -457,9 +425,7 @@ public class Profile {
                     System.out.println();
                     System.out.println("|1| Aceitar");
                     System.out.println("|2| Recusar");
-                    System.out.println("|0| Voltar");
-                    System.out.println();
-                    System.out.print("> ");
+                    endOfMenu();
 
                     action = Integer.parseInt(Main.input.next());
                     Main.clear();
@@ -474,7 +440,7 @@ public class Profile {
                         case 2:
                             community.getInvitations().remove(option-1);
 
-                            System.out.println("Membro adicionada na comunidade "+community.getName());
+                            System.out.println("Membro recusado na comunidade "+community.getName());
                             return false;
                         case 0:
                             Main.clear();
@@ -498,9 +464,7 @@ public class Profile {
         int option = -1;
         do {
             int i = 0;
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Comunidades > Minhas comunidades > Convites");
-            System.out.println("--------------------------------------------------");
+            title("Comunidades > Minhas comunidades > Convites");
             for(Community c : connected.getMyCommunities()) {
                 if(!c.getInvitations().isEmpty()) {
                     System.out.println("|"+(i+1)+"| "+c.getName());
@@ -508,9 +472,7 @@ public class Profile {
                 i++;
             }
             System.out.println();
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
 
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -530,9 +492,7 @@ public class Profile {
         Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Comunidades > Minhas comunidades");
-            System.out.println("--------------------------------------------------");
+            title("Comunidades > Minhas comunidades");
             if(!connected.getMyCommunities().isEmpty()) {
                 for(Community c : connected.getMyCommunities())
                         System.out.println(c.getName());
@@ -549,9 +509,7 @@ public class Profile {
                     break;
                 }
             }
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
     
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -585,9 +543,7 @@ public class Profile {
         Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Comunidades > Recados");
-            System.out.println("--------------------------------------------------");
+            title("Comunidades > Recados");
             int i = 0;
             for(Community community : connected.getCommunities()) {
                 System.out.println("|"+(i+1)+"| "+community.getName());
@@ -595,9 +551,7 @@ public class Profile {
             }
 
             System.out.println();
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
             
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -608,24 +562,18 @@ public class Profile {
                     String text;
                     do {
                         Main.clear();
-                        System.out.println("--------------------------------------------------");
-                        System.out.println("iFace | Comunidades > Recados > "+community.getName());
-                        System.out.println("--------------------------------------------------");
-                        
+                        title("Comunidades > Recados > "+community.getName());
                         if(!connected.getCommunities().isEmpty()) {
                             for(Message message : community.getChat())
                                 System.out.println(message.getDate()+" "+message.getSender().getNameLastName()+" disse: "+message.getText());
                         }
 
                         System.out.println();
-                        System.out.println("|0| Voltar");
-                        System.out.println();
-                        System.out.print("> ");
+                        endOfMenu();
                         text = Main.input.nextLine();
 
                         if(!text.equals("0") && !text.isEmpty()) {
-                            String date = new SimpleDateFormat("[dd/MM/yyyy][HH:mm]").format(Calendar.getInstance().getTime());
-                            Message message = new Message(connected, text, date);
+                            Message message = new Message(connected, text, Calendar.getInstance().getTime());
 
                             community.setMessage(message);
                         }
@@ -643,9 +591,7 @@ public class Profile {
         Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Comunidades");
-            System.out.println("--------------------------------------------------");
+            title("Comunidades");
             if(!connected.getCommunities().isEmpty()) {
                 for(Community c : connected.getCommunities())
                     System.out.println(c.getName());
@@ -656,9 +602,7 @@ public class Profile {
             System.out.println("|1| Buscar comunidade");
             System.out.println("|2| Minhas comunidades");
             if(!connected.getCommunities().isEmpty()) System.out.println("|3| Recados");
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
 
             try {
                 option = Integer.parseInt(Main.input.next());
@@ -690,21 +634,18 @@ public class Profile {
     }
 
     private void feed() throws IOException, InterruptedException {
-        Main.clear();
         String text;
         do {
             Main.input.nextLine();
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | Feed de Notícias");
-            System.out.println("--------------------------------------------------");
-                for(Post post : Main.feed) {
-                    if(post.getSender().equals(connected) || post.getVisibility() || connected.getFriends().contains(post.getSender()))
-                        System.out.println(post.getDate()+" "+post.getSender().getNameLastName()+" publicou: "+post.getText());
+            title("Feed de Notícias");
+            for(Post post : Main.feed) {
+                if(post.getSender().equals(connected) || post.getVisibility() || connected.getFriends().contains(post.getSender())) {
+                    System.out.print(new SimpleDateFormat("[dd MMMM yyyy]|HH:mm|").format(post.getDate()).toUpperCase());
+                    System.out.println(" "+post.getSender().getNameLastName()+" disse: "+post.getText());
                 }
+            }
             System.out.println();
-            System.out.println("|0| Voltar");
-            System.out.println();
-            System.out.print("> ");
+            endOfMenu();
             text = Main.input.nextLine();
 
             if(!text.equals("0") && !text.isEmpty()) {
@@ -722,8 +663,7 @@ public class Profile {
                     Main.clear();
 
                     if(option == 1 || option == 2) {
-                        String date = new SimpleDateFormat("[dd/MM/yyyy][HH:mm]").format(Calendar.getInstance().getTime());
-                        Post post = new Post(connected, text, date);
+                        Post post = new Post(connected, text, Calendar.getInstance().getTime());
                         if(option == 1) 
                             post.setVisibility(false);
                         else
@@ -737,21 +677,18 @@ public class Profile {
                     System.out.println("OPCAO INVALIDA");
                 }
             }
+            Main.clear();
         } while(!text.equals("0"));
-        Main.clear();
     }
 
     public void menu() throws IOException, InterruptedException {
         Main.clear();
         int option = -1;
         do {
-            System.out.println("--------------------------------------------------");
-            System.out.println("iFace | "+connected.getNameLastName());
-            System.out.println("--------------------------------------------------");
+            title(connected.getNameLastName());
             System.out.println("Amigos: "+connected.getFriends().size());
             System.out.println("Comunidades: "+connected.getCommunities().size());
             System.out.println();
-
             System.out.println("|1| Perfil");
             System.out.println("|2| Amigos");
             System.out.println("|3| Recados");
@@ -763,6 +700,8 @@ public class Profile {
 
             try {
                 option = Integer.parseInt(Main.input.next());
+
+                Main.clear();
                 switch(option) {
                     case 1:
                         if(!profile()) return;
@@ -780,14 +719,11 @@ public class Profile {
                         feed();
                         break;
                     case 0:
-                        Main.clear();
                         return;
                     default:
-                        Main.clear();
                         System.out.println("OPCAO INVALIDA");
                 }
-            }
-            catch(Exception e) {
+            } catch(Exception e) {
                 Main.clear();
                 System.out.println("OPCAO INVALIDA");
             }
