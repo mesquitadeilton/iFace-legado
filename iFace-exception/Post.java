@@ -1,7 +1,9 @@
+import java.util.*;
+
 public class Post extends Message {
     private boolean visibility = true;
 
-    public Post(User sender, String text, String date) {
+    public Post(User sender, String text, Date date) {
         super(sender, text, date);
     }
 
